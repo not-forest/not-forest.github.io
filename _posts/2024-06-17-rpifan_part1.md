@@ -46,6 +46,7 @@ So in order to be independent of Raspberry Pi OS and it's software, a custom com
 [Bitbake](https://docs.yoctoproject.org/bitbake/) is an overkill for this, of course one may use it if they wish, but buildroot is enough for a testing environment to play around and it compiles quickly. It is very easy to use and has a solid amount of guides available anywhere, but for the sake of completion, all required commands and changes are included there.
 
 1. Clone
+
 To get buildroot just clone it from the official repository:
 ```bash
 git clone git@github.com:buildroot/buildroot.git
