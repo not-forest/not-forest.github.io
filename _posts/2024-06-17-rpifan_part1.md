@@ -1,7 +1,19 @@
 ---
 title: Raspberry Pi Fan Driver (Part 1)
 date: 2024-06-17
+author: notforest
+description: This post provides all information needed to get started with a custom embedded Linux driver on Raspberry Pi platform.
 comments: "true"
+categories:
+  - Embedded
+  - Linux
+tags:
+  - embedded
+  - linux
+  - driver
+  - raspberrypi
+  - software
+  - guide
 ---
 
 ## Part 1 (Fresh Start)
