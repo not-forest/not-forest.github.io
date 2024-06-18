@@ -2,7 +2,7 @@
 title: Raspberry Pi Fan Driver (Part 1)
 date: 2024-06-17
 author: notforest
-description: This post provides all information needed to get started with a custom embedded Linux driver on Raspberry Pi platform.
+description: This post provides all information needed to get started with a custom embedded Linux driver on Raspberry Pi platform. In the end a minimal character driver would be written to create a solid starting point.
 comments: "true"
 categories:
   - Embedded
@@ -14,17 +14,16 @@ tags:
   - raspberrypi
   - software
   - guide
+  - EASY
 ---
 
 ## Part 1 (Fresh Start)
 
 > This part provides the basic initialization part for testing environment and driver's code. The driver will not be dependent on Raspberry Pi OS and any software that comes with it, which allows to focus more on Linux and it's structure in general. 
 
-{: .prompt-danger }
-The blog is not written by a professional, so there may be inaccuracies. Please verify the important information.
+> The blog is not written by a professional, so there may be inaccuracies. Please verify the important information. {: .prompt-danger }
 
-{: .prompt-warning }
-All steps were made on Ubuntu 20.04, which is a Linux distribution. Any other distribution will do, however compiling this on Windows is unlikely to be possible without any emulation or virtual machines. The same goes for Mac i suppose. Linux has a rich ecosystem of development tools, so it is handy to have an extra device running it or just using multiboot. 
+> All steps were made on Ubuntu 20.04, which is a Linux distribution. Any other distribution will do, however compiling this on Windows is unlikely to be possible without any emulation or virtual machines. The same goes for Mac i suppose. Linux has a rich ecosystem of development tools, so it is handy to have an extra device running it or just using multiboot. {: .prompt-info }
 #### Presumptions
 
 Drivers are made for hardware parts, which are usually unattached from the main board. Raspberry Pi is a great platform to learn embedded Linux, but when it comes to drivers, most of them are already handled in a BSP provided by vendor. Those hardware components are also too complex for starters. 
@@ -37,7 +36,7 @@ Before writing any code and making assumptions there must be some solid grounds 
 
 ![An image of Raspberry Pi device, which is being used for this blog](/assets/rpifan_img1.png)
 
-So in order to be independent of Raspberry Pi OS and it's software, a custom compiled Linux shall be made. The driver would most likely to work on the official OS also, but custom OS allows for tweaking installed packages, changing the [device-tree](https://docs.kernel.org/devicetree/usage-model.html) with custom overlays and adding our driver to the kernel tree.
+So in order to be independent[^footnote] of Raspberry Pi OS and it's software, a custom compiled Linux shall be made. The driver would most likely to work on the official OS also, but custom OS allows for tweaking installed packages, changing the [device-tree](https://docs.kernel.org/devicetree/usage-model.html) with custom overlays and adding our driver to the kernel tree.
 
 ## Buildroot
 
@@ -51,9 +50,9 @@ To get buildroot just clone it from the official repository:
 ```bash
 git clone git@github.com:buildroot/buildroot.git
 ```
+{: .nolineno }
 
-{: .prompt-tip }
-If something went wrong, it is probably useful to check out the official [documentation](https://buildroot.org/downloads/manual/manual.html#getting-buildroot) for it's requirements. 
+> If something went wrong, it is probably useful to check out the official [documentation](https://buildroot.org/downloads/manual/manual.html#getting-buildroot) for it's requirements. {: .prompt-tip }
 
 Next commands shall be executed inside the cloned `buildroot` folder. 
 
@@ -63,6 +62,7 @@ Firstly search from the configuration for yours RPi. They can be seen after the 
 ```bash
 ls configs/ | grep raspberrypi
 ```
+{: .nolineno }
 
 For me `raspberrypi4_64_defconfig` is a suitable one. It is a clean 64-bit Linux with minimal available commands and a command line interface. Config names already speak for themselves, but to be sure, sometimes it is useful to check out which platform you have in the [documentation](https://www.raspberrypi.com/documentation/computers/raspberry-pi.html).
 
@@ -70,6 +70,7 @@ Buildroot is a set of Makefiles that automatise all hard work via simple command
 ```bash
 make raspberrypi4_64_defconfig
 ```
+{: .nolineno }
 
 5. Little tweaks
 
@@ -79,13 +80,13 @@ To add the `dropbear` package one can tweak the `.config` file, which consists a
 ```bash
 make menuconfig
 ```
+{: .nolineno }
 
 Navigate to `Target packages > Networking applications`, find and select `dropbear` package.
 
 ![An image, on which a dropbear package can be seen within buildroot's GUI](/assets/rpifan_img2.png)
 
-{: .prompt-warning }
-This won't be enough. The root user must have a password in order for ssh to work. It can be set in `System configuration > Root password`.
+> This won't be enough. The root user must have a password in order for ssh to work. It can be set in `System configuration > Root password`. {: .prompt-warning }
 
 However that won't be a plug-and-play solution. Even after compilation the board would not obtain any IP address on which we can connect via `ssh root@AA.BB.CC.DD`. After the Ethernet line will be up, RPi would send DHCP requests to our computer and would not obtain any proper response, if you are not running a DHCP server on it of course.
 
@@ -103,10 +104,11 @@ Now lets create an overlay for our network interfaces. All RPis (with no extensi
 mkdir -p ./overlay/etc/network    # Inside the buildroot folder.
 touch ./overlay/etc/network/interfaces
 ```
+{: .nolineno }
 
 Then go to your favorite text editor and define something like so.
 
-```interfaces
+```plaintext
 auto lo
 iface lo inet loopback
 
@@ -119,17 +121,15 @@ broadcast 10.255.255.255
 gateway 10.0.0.2
 ```
 
-{: .prompt-warning }
-Don't forget to also provide a proper netmask, network and broadcast addresses.
+> Don't forget to also provide a proper netmask, network and broadcast addresses. {: .prompt-warning }
 
 7. Compile
 To compile just execute `make` with no arguments. It will take some time, maybe several hours or so. It is a whole Linux after all.
 
-{: .prompt-tip }
-If the 6th step was made, you can also check if the compilation did successfully included the predefined `interfaces` file like so: 
+> If the 6th step was made, you can also check if the compilation did successfully included the predefined `interfaces` file like so: {: .prompt-tip } 
 ```bash
 cat output/target/etc/network/interfaces
-```
+``` 
 ## Flashing
 
 To run an OS on RPi one have to copy it's image to SD card. The Pi requires a micro SD one, so to write something on it from a host device, an adaptor, that usually comes with RPi in a pack, is necessary.
@@ -138,26 +138,25 @@ To run an OS on RPi one have to copy it's image to SD card. The Pi requires a mi
 
 After plugging the SD into a slot it is important to unmount all partitions that it may had had before, because even the one that comes into a package with RPi is often supplied with Raspberry Pi OS pre-written.
 
-{: .prompt-warning }
-If you have something like "_Alcor Micro AU6625 PCI-E Flash card reader controller_" on HP laptop like i do, don't waste time fixing it because there are no working Linux drivers for it available online that would work with newer kernels. According to [this](https://linux-hardware.org/?id=pci%3A1aea-6625-103c-8745) the driver available on the master Linux branch `alcor_pci.c` should be working for 5.6 - 6.3 kernels, which are not the newest ones. There are no datasheets about this hardware anywhere, furthermore this existing driver was a result of reverse engineering. Until it is not compatible with newer kernels, one shall use Windows and some programs like [balenaEtcher](https://etcher.balena.io/) to write raw OS file into the SD, because of course Windows has working drivers for this magic box.
+> If you have something like "_Alcor Micro AU6625 PCI-E Flash card reader controller_" on HP laptop like i do, don't waste time fixing it because there are no working Linux drivers for it available online that would work with newer kernels. According to [this](https://linux-hardware.org/?id=pci%3A1aea-6625-103c-8745) the driver available on the master Linux branch `alcor_pci.c` should be working for 5.6 - 6.3 kernels, which are not the newest ones. There are no datasheets about this hardware anywhere, furthermore this existing driver was a result of reverse engineering. Until it is not compatible with newer kernels, one shall use Windows and some programs like [balenaEtcher](https://etcher.balena.io/) to write raw OS file into the SD, because of course Windows has working drivers for this magic box. {: .prompt-warning }
 
 If a laptop does not have a SD slot or you don't have an adaptor, probably buying a cheap SD-to-USB adaptor is way better. At least there would be zero problems with drivers this way, and the process will be the same as flashing an OS on a pendrive.
 
-{: .prompt-tip }
-The SD reader controller is most likely to be found with `lspci` command.
+> The SD reader controller is most likely to be found with `lspci` command. {: .prompt-tip }
 
 Use `lsblk` to  find your SD card. It will probably named something like "_mmcblk2_", but it is always a great idea to double check if it is a right one. The file needed will be located in output folder like so `output/images/sdcard.img`. Use `dd` to copy the content of .img file to the SD card:
 ```bash
 sudo dd if=output/images/sdcard.img of=/dev/{your_sd_name} bs=1M
 ```
-
+{: .nolineno }
 ## Connecting
 
 At this moment a testing environment should be working properly. To control the RPi via a host device the following command would be used:
 
 ```bash
-ssh 10.0.0.1:root    # IP must be the one you've used.
+ssh root@10.0.0.1   # IP must be the one you've used.
 ```
+{: .nolineno }
 
 It will ask for a password from the root account. Each command typed afterwards would work as if we were writing it on the RPi with plugged in keyboard. To swiftly copy output files to our target RPi, the `scp` command is useful.
 
@@ -173,9 +172,9 @@ A hello world driver must be done. It still will require some effort to properly
     ├── driver.c
     └── Makefile
 ```
+{: .nolineno }
 
-{: .prompt-tip }
-The `compile_commands.json` file is optional and provides compilation information to the LSP server. If you are using some IDE that does that for you automatically, then it can be ignored. This file was generated by `bear` tool. It is useful for handling code for different Linux kernel versions. Link to bear is [here](https://github.com/rizsotto/Bear).
+> The `compile_commands.json` file is optional and provides compilation information to the LSP server. If you are using some IDE that does that for you automatically, then it can be ignored. This file was generated by `bear` tool. It is useful for handling code for different Linux kernel versions. Link to bear is [here](https://github.com/rizsotto/Bear). {: .prompt-tip }
 
 ### Makefile
 
@@ -191,7 +190,7 @@ ARCH ?= arm64
 COMPILER ?= aarch64-linux-gnu-
 
 # Path to custom kernel headers.
-KDIR := output/target/lib/modules/6.1.61-v8/
+KDIR := ~/buildroot/output/build/linux-custom/
 
 all:
 	make -C $(KDIR) M=$(CURDIR) ARCH=$(ARCH) CROSS_COMPILE=$(COMPILER) modules
@@ -202,11 +201,12 @@ clean:
 
 A short review of what is happening here:
 - `obj-m += driver.o` - declaring which object output file we are expecting. The name should match the .c located in the same folder that this Makefile. In our case it must be `driver.c`;
-{: .prompt-info }
-Multiple C modules are not allowed to add this way, because only one `.ko` driver output file must be created. Multiple files support will be seen in next parts of this blog.
+
+> Multiple C modules are not allowed to add this way, because only one `.ko` driver output file must be created. Multiple files support will be seen in next parts of this blog. {: .prompt-info }
+
 - `ARCH ?= arm64` - basically the target's architecture. For 32-bit ones `arm` must be used;
 - `COMPILER ?= aarch64-linux-gnu-` - this one is interesting one as only the prefix must be provided. To cross-compile for 64-bit ARM architecture the `aarch64-linux-gnu-gcc` would be used, so by stripping the gcc from the full name we are getting the prefix. For 32-bit targets `arm-linux-gnueabi-` might be a possible option;
-- `KDIR := output/target/lib/modules/6.1.61-v8/` - This is a path to generated Linux headers. The Linux version may be different so this must be adjusted;
+- `KDIR := ~/buildroot/output/build/linux-custom/` - This is a path to generated Linux headers[^fn-nth-2]. The buildroot folder might be in a different place, so this must be adjusted.
 - `all` - this Makefile rule would allow us to generate the kernel driver itself. By providing all symbols defined above the cross-compilation will be possible;
 - `clean` - simply cleans all generated module files including the `.ko` file. Useful since many output files would be spawned in the same folder.
 
@@ -247,6 +247,7 @@ It is a minimal kernel driver's code, that just prints some messages when loadin
 ```bash
 scp driver.ko root@10.0.0.1:/root    # IP may be different.
 ```
+{: .nolineno }
 
 Then within the Raspberry Pi we can test out the driver my loading and unloading like so:
 
@@ -261,11 +262,11 @@ rmmmod driver.ko
 dmesg | tail -1
 [ 1108.600517] driver: Fan driver closed.
 ```
+{: .nolineno }
 
 Print messages are working as intended so we can proceed to performing some upgrades.
 
-{: .prompt-info }
-There is a message that our driver *taints* the kernel. This is completely alright since this module is out-of-tree and considered as something foreign by the kernel. For now this is just a warning and nothing more.
+> There is a message that our driver *taints* the kernel. This is completely alright since this module is out-of-tree and considered as something foreign by the kernel. For now this is just a warning and nothing more. {: .prompt-info }
 
 To create some solid ground of being able to control the driver's behavior, some simple I/O communication from the user-space must be added. A simple character device with it's class should do the trick for most of the things. For this we should define our `open`, `close`, `read` and `write` functions.
 
@@ -348,8 +349,7 @@ _unreg:
 
 In the code we firstly allocate some memory region for our character driver with `alloc_chrdev_region`, then registering a character driver: `cdev_add`. To gain access from user-space we have to create the class and spawn a new device under this class by calling `class_create` and `device_create`. After all that, if everything was successful, we can observe a new device under `/dev/{DEVICE_NAME}`.
 
-{: .prompt-warning }
-It is important to clean everything in the opposite order if something goes wrong. For that using labels is a very convenient way to unwind each part one by one.
+> It is important to clean everything in the opposite order if something goes wrong. For that using labels is a very convenient way to unwind each part one by one. {: .prompt-warning }
 
 Even if everything would go fine, our driver still must clean everything on unloading. So the `__exit` function must also do the cleaning, however it is very important to not mess up the order.
 
@@ -444,15 +444,32 @@ sh: write error: Invalid argument
 dmesg | tail -1
 [  778.494152] driver: Invalid data size
 ```
+{: .nolineno }
 
 The driver works perfectly fine and performs all what we defined. The buffer would only hold 3 characters, because it is enough to provide all values from 0 to 255 in written form, which then will be used to select required GPIO and PWM mode.
 
-{: .prompt-info }
-The `KBUF_SIZE` is defined as 4 in the code, which makes perfect sense because `echo` command, as well as most others would add a null character `'\0'` to the end of it, which is why when we try to write `9999` to it, the additional null character would cause a total size of 5 characters to be written.
+> The `KBUF_SIZE` is defined as 4 in the code, which makes perfect sense because `echo` command, as well as most others would add a null character `'\0'` to the end of it, which is why when we try to write `9999` to it, the additional null character would cause a total size of 5 characters to be written. {: .prompt-info }
 
 For now this driver does not control any actual hardware part, but this start must be done before actually implementing the logic itself.
 
 > In the next part, a GPIO support will be added. The driver would be able to initialize a free GPIO pin when being loaded and be configurable from character driver defined previously.
+
+
+#### Footnotes:
+
+[^footnote]: By independent i only mean that we aren't going to use any software that is specific for Raspberry Pi OS, for example when implementing a PWM control, to change the PWM channels, one can provide `dtoverlay=pwm-2chan` into `/boot/firmware/config.txt` inside the OS in real time. That is very easy but we are going to also do it in real time without ever needing the help of Raspberry Pi OS.
+[^fn-nth-2]: Basically this folder contains the complete source code and necessary files for the custom Linux kernel, including architecture-specific code, kernel modules, file systems, core, libraries, and the Makefile that controls the build process. When you use `make modules` in this folder, it performs cross-compilation using a custom specified toolchain to build kernel modules compatible with your custom Linux environment.
+<h3 style="text-align: center;">Read more</h3>
+<div style="display: flex; flex-direction: column; align-items: flex-start;">
+  <div style="display: flex; justify-content: space-between; width: 100%;">
+    <span><h3><a href="/index.html">Previous Post</a></h3></span>
+    <span><h3><a href="/index.html">Next Post</a></h3></span>
+  </div>
+  <div>
+    <h3><a href="/index.html">Home</a></h3>
+  </div>
+</div>
+
 
 {% if page.comments %}
 <div id="disqus_thread"></div>
