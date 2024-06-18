@@ -467,11 +467,6 @@ For now this driver does not control any actual hardware part, but this start mu
 
 > In the next part, a GPIO support will be added. The driver would be able to initialize a free GPIO pin when being loaded and be configurable from character driver defined previously.
 
-
-#### Footnotes:
-
-[^footnote]: By independent i only mean that we aren't going to use any software that is specific for Raspberry Pi OS, for example when implementing a PWM control, to change the PWM channels, one can provide `dtoverlay=pwm-2chan` into `/boot/firmware/config.txt` inside the OS in real time. That is very easy but we are going to also do it in real time without ever needing the help of Raspberry Pi OS.
-[^fn-nth-2]: Basically this folder contains the complete source code and necessary files for the custom Linux kernel, including architecture-specific code, kernel modules, file systems, core, libraries, and the Makefile that controls the build process. When you use `make modules` in this folder, it performs cross-compilation using a custom specified toolchain to build kernel modules compatible with your custom Linux environment.
 <h3 style="text-align: center;">Read more</h3>
 <div style="display: flex; flex-direction: column; align-items: flex-start;">
   <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -505,3 +500,7 @@ For now this driver does not control any actual hardware part, but this start mu
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 {% endif %}
+
+#### Footnotes:
+[^footnote]: By independent i only mean that we aren't going to use any software that is specific for Raspberry Pi OS, for example when implementing a PWM control, to change the PWM channels, one can provide `dtoverlay=pwm-2chan` into `/boot/firmware/config.txt` inside the OS in real time. That is very easy but we are going to also do it in real time without ever needing the help of Raspberry Pi OS.
+[^fn-nth-2]: Basically this folder contains the complete source code and necessary files for the custom Linux kernel, including architecture-specific code, kernel modules, file systems, core, libraries, and the Makefile that controls the build process. When you use `make modules` in this folder, it performs cross-compilation using a custom specified toolchain to build kernel modules compatible with your custom Linux environment.
