@@ -21,9 +21,11 @@ tags:
 
 > This part provides the basic initialization part for testing environment and driver's code. The driver will not be dependent on Raspberry Pi OS and any software that comes with it, which allows to focus more on Linux and it's structure in general. 
 
-> The blog is not written by a professional, so there may be inaccuracies. Please verify the important information. {: .prompt-danger }
+> The blog is not written by a professional, so there may be inaccuracies. Please verify the important information.
+{: .prompt-danger }
 
-> All steps were made on Ubuntu 20.04, which is a Linux distribution. Any other distribution will do, however compiling this on Windows is unlikely to be possible without any emulation or virtual machines. The same goes for Mac i suppose. Linux has a rich ecosystem of development tools, so it is handy to have an extra device running it or just using multiboot. {: .prompt-info }
+> All steps were made on Ubuntu 20.04, which is a Linux distribution. Any other distribution will do, however compiling this on Windows is unlikely to be possible without any emulation or virtual machines. The same goes for Mac i suppose. Linux has a rich ecosystem of development tools, so it is handy to have an extra device running it or just using multiboot.
+{: .prompt-info }
 #### Presumptions
 
 Drivers are made for hardware parts, which are usually unattached from the main board. Raspberry Pi is a great platform to learn embedded Linux, but when it comes to drivers, most of them are already handled in a BSP provided by vendor. Those hardware components are also too complex for starters. 
@@ -52,7 +54,8 @@ git clone git@github.com:buildroot/buildroot.git
 ```
 {: .nolineno }
 
-> If something went wrong, it is probably useful to check out the official [documentation](https://buildroot.org/downloads/manual/manual.html#getting-buildroot) for it's requirements. {: .prompt-tip }
+> If something went wrong, it is probably useful to check out the official [documentation](https://buildroot.org/downloads/manual/manual.html#getting-buildroot) for it's requirements. 
+{: .prompt-tip }
 
 Next commands shall be executed inside the cloned `buildroot` folder. 
 
@@ -86,7 +89,8 @@ Navigate to `Target packages > Networking applications`, find and select `dropbe
 
 ![An image, on which a dropbear package can be seen within buildroot's GUI](/assets/rpifan_img2.png)
 
-> This won't be enough. The root user must have a password in order for ssh to work. It can be set in `System configuration > Root password`. {: .prompt-warning }
+> This won't be enough. The root user must have a password in order for ssh to work. It can be set in `System configuration > Root password`. 
+{: .prompt-warning }
 
 However that won't be a plug-and-play solution. Even after compilation the board would not obtain any IP address on which we can connect via `ssh root@AA.BB.CC.DD`. After the Ethernet line will be up, RPi would send DHCP requests to our computer and would not obtain any proper response, if you are not running a DHCP server on it of course.
 
@@ -121,12 +125,14 @@ broadcast 10.255.255.255
 gateway 10.0.0.2
 ```
 
-> Don't forget to also provide a proper netmask, network and broadcast addresses. {: .prompt-warning }
+> Don't forget to also provide a proper netmask, network and broadcast addresses. 
+{: .prompt-warning }
 
 7. Compile
 To compile just execute `make` with no arguments. It will take some time, maybe several hours or so. It is a whole Linux after all.
 
-> If the 6th step was made, you can also check if the compilation did successfully included the predefined `interfaces` file like so: {: .prompt-tip } 
+> If the 6th step was made, you can also check if the compilation did successfully included the predefined `interfaces` file like so: 
+{: .prompt-tip } 
 ```bash
 cat output/target/etc/network/interfaces
 ``` 
@@ -138,11 +144,13 @@ To run an OS on RPi one have to copy it's image to SD card. The Pi requires a mi
 
 After plugging the SD into a slot it is important to unmount all partitions that it may had had before, because even the one that comes into a package with RPi is often supplied with Raspberry Pi OS pre-written.
 
-> If you have something like "_Alcor Micro AU6625 PCI-E Flash card reader controller_" on HP laptop like i do, don't waste time fixing it because there are no working Linux drivers for it available online that would work with newer kernels. According to [this](https://linux-hardware.org/?id=pci%3A1aea-6625-103c-8745) the driver available on the master Linux branch `alcor_pci.c` should be working for 5.6 - 6.3 kernels, which are not the newest ones. There are no datasheets about this hardware anywhere, furthermore this existing driver was a result of reverse engineering. Until it is not compatible with newer kernels, one shall use Windows and some programs like [balenaEtcher](https://etcher.balena.io/) to write raw OS file into the SD, because of course Windows has working drivers for this magic box. {: .prompt-warning }
+> If you have something like "_Alcor Micro AU6625 PCI-E Flash card reader controller_" on HP laptop like i do, don't waste time fixing it because there are no working Linux drivers for it available online that would work with newer kernels. According to [this](https://linux-hardware.org/?id=pci%3A1aea-6625-103c-8745) the driver available on the master Linux branch `alcor_pci.c` should be working for 5.6 - 6.3 kernels, which are not the newest ones. There are no datasheets about this hardware anywhere, furthermore this existing driver was a result of reverse engineering. Until it is not compatible with newer kernels, one shall use Windows and some programs like [balenaEtcher](https://etcher.balena.io/) to write raw OS file into the SD, because of course Windows has working drivers for this magic box. 
+{: .prompt-warning }
 
 If a laptop does not have a SD slot or you don't have an adaptor, probably buying a cheap SD-to-USB adaptor is way better. At least there would be zero problems with drivers this way, and the process will be the same as flashing an OS on a pendrive.
 
-> The SD reader controller is most likely to be found with `lspci` command. {: .prompt-tip }
+> The SD reader controller is most likely to be found with `lspci` command. 
+{: .prompt-tip }
 
 Use `lsblk` to  find your SD card. It will probably named something like "_mmcblk2_", but it is always a great idea to double check if it is a right one. The file needed will be located in output folder like so `output/images/sdcard.img`. Use `dd` to copy the content of .img file to the SD card:
 ```bash
@@ -174,7 +182,8 @@ A hello world driver must be done. It still will require some effort to properly
 ```
 {: .nolineno }
 
-> The `compile_commands.json` file is optional and provides compilation information to the LSP server. If you are using some IDE that does that for you automatically, then it can be ignored. This file was generated by `bear` tool. It is useful for handling code for different Linux kernel versions. Link to bear is [here](https://github.com/rizsotto/Bear). {: .prompt-tip }
+> The `compile_commands.json` file is optional and provides compilation information to the LSP server. If you are using some IDE that does that for you automatically, then it can be ignored. This file was generated by `bear` tool. It is useful for handling code for different Linux kernel versions. Link to bear is [here](https://github.com/rizsotto/Bear). 
+{: .prompt-tip }
 
 ### Makefile
 
@@ -202,7 +211,8 @@ clean:
 A short review of what is happening here:
 - `obj-m += driver.o` - declaring which object output file we are expecting. The name should match the .c located in the same folder that this Makefile. In our case it must be `driver.c`;
 
-> Multiple C modules are not allowed to add this way, because only one `.ko` driver output file must be created. Multiple files support will be seen in next parts of this blog. {: .prompt-info }
+> Multiple C modules are not allowed to add this way, because only one `.ko` driver output file must be created. Multiple files support will be seen in next parts of this blog. 
+{: .prompt-info }
 
 - `ARCH ?= arm64` - basically the target's architecture. For 32-bit ones `arm` must be used;
 - `COMPILER ?= aarch64-linux-gnu-` - this one is interesting one as only the prefix must be provided. To cross-compile for 64-bit ARM architecture the `aarch64-linux-gnu-gcc` would be used, so by stripping the gcc from the full name we are getting the prefix. For 32-bit targets `arm-linux-gnueabi-` might be a possible option;
@@ -266,7 +276,8 @@ dmesg | tail -1
 
 Print messages are working as intended so we can proceed to performing some upgrades.
 
-> There is a message that our driver *taints* the kernel. This is completely alright since this module is out-of-tree and considered as something foreign by the kernel. For now this is just a warning and nothing more. {: .prompt-info }
+> There is a message that our driver *taints* the kernel. This is completely alright since this module is out-of-tree and considered as something foreign by the kernel. For now this is just a warning and nothing more. 
+{: .prompt-info }
 
 To create some solid ground of being able to control the driver's behavior, some simple I/O communication from the user-space must be added. A simple character device with it's class should do the trick for most of the things. For this we should define our `open`, `close`, `read` and `write` functions.
 
@@ -349,7 +360,8 @@ _unreg:
 
 In the code we firstly allocate some memory region for our character driver with `alloc_chrdev_region`, then registering a character driver: `cdev_add`. To gain access from user-space we have to create the class and spawn a new device under this class by calling `class_create` and `device_create`. After all that, if everything was successful, we can observe a new device under `/dev/{DEVICE_NAME}`.
 
-> It is important to clean everything in the opposite order if something goes wrong. For that using labels is a very convenient way to unwind each part one by one. {: .prompt-warning }
+> It is important to clean everything in the opposite order if something goes wrong. For that using labels is a very convenient way to unwind each part one by one. 
+{: .prompt-warning }
 
 Even if everything would go fine, our driver still must clean everything on unloading. So the `__exit` function must also do the cleaning, however it is very important to not mess up the order.
 
@@ -448,7 +460,8 @@ dmesg | tail -1
 
 The driver works perfectly fine and performs all what we defined. The buffer would only hold 3 characters, because it is enough to provide all values from 0 to 255 in written form, which then will be used to select required GPIO and PWM mode.
 
-> The `KBUF_SIZE` is defined as 4 in the code, which makes perfect sense because `echo` command, as well as most others would add a null character `'\0'` to the end of it, which is why when we try to write `9999` to it, the additional null character would cause a total size of 5 characters to be written. {: .prompt-info }
+> The `KBUF_SIZE` is defined as 4 in the code, which makes perfect sense because `echo` command, as well as most others would add a null character `'\0'` to the end of it, which is why when we try to write `9999` to it, the additional null character would cause a total size of 5 characters to be written. 
+{: .prompt-info }
 
 For now this driver does not control any actual hardware part, but this start must be done before actually implementing the logic itself.
 
