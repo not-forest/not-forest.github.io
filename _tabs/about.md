@@ -10,5 +10,4 @@ This blog will be eventually filled with some interesting content and guides rel
 
 Each post will be in form of step-by-step guide, with different learning curves to encourage more people in those topics.
 
-{: .prompt-danger }
-The blog is not written by a professional, so there may be inaccuracies. Please verify the important information and provide your own thoughts.
+> The blog is not written by a professional, so there may be inaccuracies. Please verify the important information and provide your own thoughts. {: .prompt-danger }
