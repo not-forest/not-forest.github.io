@@ -1010,7 +1010,7 @@ _Voltage measured on the circuit's output_
 <h3 style="text-align: center;">Read more</h3>
 <div style="display: flex; flex-direction: column; align-items: flex-start;">
   <div style="display: flex; justify-content: space-between; width: 100%;">
-    <span><h3><a href="{{% link 2024-06-17-rpifan_part1.md %}}">Previous Post</a></h3></span>
+    <span><h3><a href="{% post_url 2024-06-17-rpifan_part1 %}">Previous Post</a></h3></span>
     <span><h3><a href="/index.html">Next Post</a></h3></span>
   </div>
   <div>
