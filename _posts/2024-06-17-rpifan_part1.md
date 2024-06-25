@@ -476,7 +476,7 @@ For now this driver does not control any actual hardware part, but this start mu
 <div style="display: flex; flex-direction: column; align-items: flex-start;">
   <div style="display: flex; justify-content: space-between; width: 100%;">
     <span><h3><a href="/index.html">Previous Post</a></h3></span>
-    <span><h3><a href="/_posts/2024-06-22-rpifan_part2.md">Next Post</a></h3></span>
+    <span><h3><a href="{{% link 2024-06-17-rpifan_part1.md %}}">Next Post</a></h3></span>
   </div>
   <div>
     <h3><a href="/index.html">Home</a></h3>
