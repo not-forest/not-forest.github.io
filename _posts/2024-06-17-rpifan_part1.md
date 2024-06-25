@@ -37,6 +37,7 @@ So for those, '_like me_', writing a simple driver for a component that only nee
 Before writing any code and making assumptions there must be some solid grounds for testing. In my case, it is a Raspberry Pi 4 B, however i suppose everything here should be working on any RPi, because Linux would handle hardware differences, and the features used in this driver would not be exclusive for this particular RPi.
 
 ![An image of Raspberry Pi device, which is being used for this blog](/assets/rpifan_img1.png)
+_An image of Raspberry Pi 4 B_
 
 So in order to be independent[^footnote] of Raspberry Pi OS and it's software, a custom compiled Linux shall be made. The driver would most likely to work on the official OS also, but custom OS allows for tweaking installed packages, changing the [device-tree](https://docs.kernel.org/devicetree/usage-model.html) with custom overlays and adding our driver to the kernel tree.
 
@@ -88,6 +89,7 @@ make menuconfig
 Navigate to `Target packages > Networking applications`, find and select `dropbear` package.
 
 ![An image, on which a dropbear package can be seen within buildroot's GUI](/assets/rpifan_img2.png)
+_Dropbear in the buildroot's GUI_
 
 > This won't be enough. The root user must have a password in order for ssh to work. It can be set in `System configuration > Root password`. 
 {: .prompt-warning }
@@ -99,6 +101,7 @@ They may be a lot of solution for this, including running own DHCP server on a h
 In the same menu, find `ifupdown scripts` package and make sure it is selected. For my configuration it was enabled from the very start.
 
 ![An image of showing where the ifupdown scripts can be found](/assets/rpifan_img5.png)
+_Ifdown scripts in the buildroot's GUI_
 
 Now head to `System configuration > Root filesystem overlay` and type `overlay` there. It will be the folder in which we can manually add files, like text or binaries, which will be then statically compiled with Linux.
 
@@ -141,6 +144,7 @@ cat output/target/etc/network/interfaces
 To run an OS on RPi one have to copy it's image to SD card. The Pi requires a micro SD one, so to write something on it from a host device, an adaptor, that usually comes with RPi in a pack, is necessary.
 
 ![A representation of how a SD card adapter might look like](/assets/rpifan_img3.png)
+_Example of a SD adapter_
 
 After plugging the SD into a slot it is important to unmount all partitions that it may had had before, because even the one that comes into a package with RPi is often supplied with Raspberry Pi OS pre-written.
 
@@ -169,6 +173,7 @@ ssh root@10.0.0.1   # IP must be the one you've used.
 It will ask for a password from the root account. Each command typed afterwards would work as if we were writing it on the RPi with plugged in keyboard. To swiftly copy output files to our target RPi, the `scp` command is useful.
 
 ![The image of Raspberry Pi 4 connected to power and Ethernet.](/assets/rpifan_img4.png)
+_Raspberry Pi 4 B connected_
 ## Minimal Driver
 
 A hello world driver must be done. It still will require some effort to properly cross compile the driver. Here is how a structure of starter driver's source might look like:
@@ -471,7 +476,7 @@ For now this driver does not control any actual hardware part, but this start mu
 <div style="display: flex; flex-direction: column; align-items: flex-start;">
   <div style="display: flex; justify-content: space-between; width: 100%;">
     <span><h3><a href="/index.html">Previous Post</a></h3></span>
-    <span><h3><a href="/index.html">Next Post</a></h3></span>
+    <span><h3><a href="/_posts/2024-06-22-rpifan_part2.md">Next Post</a></h3></span>
   </div>
   <div>
     <h3><a href="/index.html">Home</a></h3>
